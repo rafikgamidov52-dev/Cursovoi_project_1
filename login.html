@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ t('login_title') }} — ДомКлюч.kz{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="auth-page">
+    <h1>{{ t('login_title') }}</h1>
+    <p class="muted">{{ t('admin_hint') }}</p>
+    <form class="auth-form" method="post" action="{{ url_for('login') }}">
+      {% if request.args.get('next') %}
+      <input type="hidden" name="next" value="{{ request.args.get('next') }}" />
+      {% endif %}
+      <label for="email">{{ t('email') }}</label>
+      <input id="email" name="email" type="email" required value="{{ form.email or '' }}" autocomplete="username" />
+      <label for="password">{{ t('password') }}</label>
+      <input id="password" name="password" type="password" required autocomplete="current-password" />
+      <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">{{ t('btn_submit_login') }}</button>
+    </form>
+    <p style="margin-top:1rem;font-size:0.9rem;"><a href="{{ url_for('register') }}">{{ t('no_account') }}</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ t('admin_title') }} — ДомКлюч.kz{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <h1>{{ t('admin_title') }}</h1>
+    <p>{{ t('admin_only') }}</p>
+  </div>
+</section>
+<section>
+  <div class="container">
+    <div class="tips-grid">
+      <article class="tip">
+        <h3>{{ t('admin_users') }}</h3>
+        <p>{{ stats.users }}</p>
+      </article>
+      <article class="tip">
+        <h3>{{ t('admin_listings') }}</h3>
+        <p>{{ stats.listings }}</p>
+      </article>
+      <article class="tip">
+        <h3>{{ t('admin_msg') }}</h3>
+        <p>{{ stats.msgs }}</p>
+      </article>
+    </div>
+
+    <h2 class="section-title" style="font-size:1.25rem;margin-top:1.2rem;">Последние сообщения</h2>
+    <div class="search-card">
+      {% if recent_messages %}
+        {% for msg in recent_messages %}
+        <div class="faq-item">
+          <h3>#{{ msg.id }} · {{ msg.email }}</h3>
+          <p style="margin-bottom:0.35rem;">Объявление: <a href="{{ url_for('listing_detail', listing_id=msg.listing_id) }}">{{ msg.title_ru }}</a></p>
+          <p>{{ msg.body }}</p>
+        </div>
+        {% endfor %}
+      {% else %}
+      <p>Пока сообщений нет.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

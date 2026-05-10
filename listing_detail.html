@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}{{ listing_title }} — ДомКлюч.kz{% endblock %}
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <p><a href="{{ index_url() }}#catalog">{{ t('back_catalog') }}</a></p>
+    <h1>{{ listing_title }}</h1>
+    <p class="section-sub" style="margin-bottom:0;">{{ listing['city'] }}, {{ listing['district'] }} · {{ listing['price'] | tenge_fmt }} {{ t('per_month') }}</p>
+  </div>
+</section>
+<section>
+  <div class="container detail-grid">
+    <div>
+      <div class="card-img real-image listing-photo" style="height:320px;border-radius:var(--radius);background-image:url('{{ listing['image_url'] }}');"></div>
+      <h2 class="section-title" style="font-size:1.2rem;margin-top:1rem;">{{ t('listing_desc') }}</h2>
+      <p>{{ listing_description }}</p>
+    </div>
+    <aside>
+      <div class="search-card">
+        <h2 style="margin-bottom:0.75rem;">{{ t('listing_specs') }}</h2>
+        <table class="spec-table">
+          <tr><th>{{ t('listing_area') }}</th><td>{{ listing['area_m2'] }} {{ t('currency_m2') }}</td></tr>
+          <tr><th>{{ t('listing_floor') }}</th><td>{{ listing['floor'] }} / {{ listing['floors_total'] }}</td></tr>
+          <tr><th>{{ t('listing_rooms') }}</th><td>{{ listing['rooms'] }}</td></tr>
+          <tr><th>{{ t('listing_city') }}</th><td>{{ listing['city'] }}</td></tr>
+          <tr><th>{{ t('listing_district') }}</th><td>{{ listing['district'] }}</td></tr>
+          <tr><th>{{ t('listing_term') }}</th><td>{{ listing['term'] }}</td></tr>
+          <tr><th>{{ t('listing_type') }}</th><td>{{ listing['owner_type'] }}</td></tr>
+          <tr><th>{{ t('listing_deposit') }}</th><td>{% if listing['deposit'] %}{{ listing['deposit'] | tenge_fmt }} ₸{% else %}—{% endif %}</td></tr>
+          <tr><th>{{ t('listing_utilities') }}</th><td>{{ utilities_text or '—' }}</td></tr>
+        </table>
+      </div>
+      <div class="search-card" style="margin-top:1rem;">
+        <h2 style="margin-bottom:0.5rem;">{{ t('contact_owner') }}</h2>
+        <p class="section-sub" style="margin-bottom:0.75rem;font-size:0.875rem;">{{ t('contact_hint') }}</p>
+        <p><strong>{{ owner['full_name'] }}</strong></p>
+        <p><a href="tel:{{ owner['phone']|replace(' ', '') }}">{{ owner['phone'] }}</a></p>
+        <p><a href="mailto:{{ owner['email'] }}">{{ owner['email'] }}</a></p>
+        {% if g.user %}
+        <form method="post" class="auth-form" style="margin-top:1rem;">
+          <label for="body">{{ t('your_message') }}</label>
+          <textarea id="body" name="body" rows="3" required placeholder="…"></textarea>
+          <button type="submit" class="btn btn-primary">{{ t('btn_send') }}</button>
+        </form>
+        {% else %}
+        <p style="margin-top:0.75rem;"><a class="btn btn-primary" href="{{ url_for('login', next=request.path) }}">{{ t('msg_need_login') }}</a></p>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

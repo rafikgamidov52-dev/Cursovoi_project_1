@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="{{ locale }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}{{ t('nav_catalog') }} — ДомКлюч.kz{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+  {% if msgs %}
+  <div class="flash-wrap">
+    {% for cat, msg in msgs %}
+    <div class="flash {% if cat == 'ok' %}flash-ok{% else %}flash-err{% endif %}">
+      {% if msg == 'msg_sent' %}{{ t('msg_sent') }}{% elif msg == 'need_login' %}{{ t('msg_need_login') }}{% elif msg == 'bad_credentials' %}Неверный email или пароль.{% elif msg == 'email_taken' %}Этот email уже зарегистрирован.{% elif msg == 'validation' %}Проверьте поля формы.{% else %}{{ msg }}{% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <header>
+    <div class="container header-inner">
+      <a class="logo" href="{{ url_for('index') }}">Дом<span>Ключ</span><span style="font-weight:500;font-size:0.85em;color:var(--muted);">.kz</span></a>
+      <nav aria-label="Main">
+        <a href="{{ url_for('index') }}#search">{{ t('nav_search') }}</a>
+        <a href="{{ url_for('index') }}#catalog">{{ t('nav_catalog') }}</a>
+        <a href="{{ url_for('index') }}#how">{{ t('nav_how') }}</a>
+        <a href="{{ url_for('index') }}#tips">{{ t('nav_tips') }}</a>
+        <a href="{{ url_for('index') }}#faq">{{ t('nav_faq') }}</a>
+      </nav>
+      <div class="top-controls">
+        <div class="language-switch" role="group" aria-label="Language">
+          <a class="lang-btn lang-btn-wrap{% if locale == 'kk' %} active{% endif %}" href="{{ url_for('set_lang', code='kk') }}">{{ t('lang_kk') }}</a>
+          <a class="lang-btn lang-btn-wrap{% if locale == 'ru' %} active{% endif %}" href="{{ url_for('set_lang', code='ru') }}">{{ t('lang_ru') }}</a>
+          <a class="lang-btn lang-btn-wrap{% if locale == 'en' %} active{% endif %}" href="{{ url_for('set_lang', code='en') }}">{{ t('lang_en') }}</a>
+        </div>
+        {% if g.user %}
+          {% if g.user['is_admin'] %}
+          <a class="btn btn-ghost btn-small" href="{{ url_for('admin_panel') }}">{{ t('nav_admin') }}</a>
+          {% endif %}
+          <span class="muted" style="font-size:0.8rem;max-width:8rem;overflow:hidden;text-overflow:ellipsis;">{{ g.user['email'] }}</span>
+          <a class="btn btn-ghost btn-small" href="{{ url_for('logout') }}">{{ t('nav_logout') }}</a>
+        {% else %}
+          <a class="btn btn-ghost btn-small" href="{{ url_for('login') }}">{{ t('nav_login') }}</a>
+          <a class="btn btn-primary btn-small" href="{{ url_for('register') }}">{{ t('nav_register') }}</a>
+        {% endif %}
+        <a class="btn btn-primary" href="{{ url_for('index') }}#catalog">{{ t('nav_rent') }}</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>{{ t('footer_copy') }}</span>
+      <span><a href="{{ url_for('index') }}">RafikCursovoi</a></span>
+    </div>
+  </footer>
+</body>
+</html>

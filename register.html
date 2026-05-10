@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ t('register_title') }} — ДомКлюч.kz{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="auth-page">
+    <h1>{{ t('register_title') }}</h1>
+    {% if err %}
+    <p class="flash flash-err" style="margin-top:0.5rem;">{{ t('errors_title') }}: {{ err | join(', ') }}</p>
+    {% endif %}
+    <form class="auth-form" method="post" action="{{ url_for('register') }}">
+      <label for="full_name">{{ t('full_name') }}</label>
+      <input id="full_name" name="full_name" required value="{{ form.full_name or '' }}" />
+      <label for="phone">{{ t('phone') }}</label>
+      <input id="phone" name="phone" type="tel" value="{{ form.phone or '' }}" />
+      <label for="email">{{ t('email') }}</label>
+      <input id="email" name="email" type="email" required value="{{ form.email or '' }}" autocomplete="username" />
+      <label for="password">{{ t('password') }} (6+)</label>
+      <input id="password" name="password" type="password" required minlength="6" autocomplete="new-password" />
+      <button type="submit" class="btn btn-primary" style="margin-top:0.5rem;">{{ t('btn_submit_register') }}</button>
+    </form>
+    <p style="margin-top:1rem;font-size:0.9rem;"><a href="{{ url_for('login') }}">{{ t('have_account') }}</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% block content %}
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <h1>{{ t('hero_title')|safe }}</h1>
+          <p class="hero-lead">{{ t('hero_lead') }}</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="{{ url_for('index') }}#catalog">{{ t('hero_catalog') }}</a>
+            <a class="btn btn-ghost" href="{{ url_for('index') }}#search">{{ t('hero_quick') }}</a>
+          </div>
+          <div class="stats" aria-label="stats">
+            <div class="stat">
+              <strong>{{ hero_stats.listings }}</strong>
+              <span>{{ t('stat_listings') }}</span>
+            </div>
+            <div class="stat">
+              <strong>{{ t('stat_reply_val') }}</strong>
+              <span>{{ t('stat_reply') }}</span>
+            </div>
+            <div class="stat">
+              <strong>{{ hero_stats.cities }}</strong>
+              <span>{{ t('stat_cities') }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="search-card" id="search">
+          <h2>{{ t('search_title') }}</h2>
+          <form class="search-fields" method="post" action="{{ url_for('search_redirect') }}">
+            <div class="field field-full">
+              <label for="city">{{ t('label_city') }}</label>
+              <input id="city" name="q" type="text" placeholder="{{ t('ph_city') }}" value="{{ q or '' }}" autocomplete="address-level2" />
+            </div>
+            <div class="field">
+              <label for="rooms">{{ t('label_rooms') }}</label>
+              <select id="rooms" name="rooms">
+                <option value="">{{ t('rooms_any') }}</option>
+                <option value="Студия" {% if rooms == 'Студия' %}selected{% endif %}>{{ t('rooms_studio') }}</option>
+                <option value="1" {% if rooms == '1' %}selected{% endif %}>1</option>
+                <option value="2" {% if rooms == '2' %}selected{% endif %}>2</option>
+                <option value="3 и более" {% if rooms == '3 и более' %}selected{% endif %}>{{ t('rooms_3plus') }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="budget">{{ t('label_budget') }}</label>
+              <select id="budget" name="budget">
+                <option value="">{{ t('budget_any') }}</option>
+                <option value="до 200 000 ₸">до 200 000 ₸</option>
+                <option value="200–350 000 ₸">200–350 000 ₸</option>
+                <option value="350–550 000 ₸">350–550 000 ₸</option>
+                <option value="550 000+ ₸">550 000+ ₸</option>
+              </select>
+            </div>
+            <div class="field field-full">
+              <label for="term">{{ t('label_term') }}</label>
+              <select id="term" name="term">
+                <option value="{{ t('term_3') }}">{{ t('term_3') }}</option>
+                <option value="{{ t('term_6') }}">{{ t('term_6') }}</option>
+                <option value="{{ t('term_11') }}">{{ t('term_11') }}</option>
+                <option value="{{ t('term_long') }}">{{ t('term_long') }}</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary search-submit">{{ t('btn_find') }}</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="container">
+        <h2 class="section-title">{{ t('how_title') }}</h2>
+        <p class="section-sub">{{ t('how_sub') }}</p>
+        <div class="steps">
+          <article class="step">
+            <div class="step-num">1</div>
+            <h3>{{ t('step1_t') }}</h3>
+            <p>{{ t('step1_p') }}</p>
+          </article>
+          <article class="step">
+            <div class="step-num">2</div>
+            <h3>{{ t('step2_t') }}</h3>
+            <p>{{ t('step2_p') }}</p>
+          </article>
+          <article class="step">
+            <div class="step-num">3</div>
+            <h3>{{ t('step3_t') }}</h3>
+            <p>{{ t('step3_p') }}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <h2 class="section-title">{{ t('cities_title') }}</h2>
+        <p class="section-sub">{{ t('cities_sub') }}</p>
+        <div class="cities">
+          {% for c in catalog_cities %}
+          <a class="city-pill" href="{{ index_url(city=c, page=1) }}#catalog">{{ c }}</a>
+          {% endfor %}
+          <a class="city-pill" href="{{ url_for('index') }}#catalog">{{ t('city_all') }}</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalog">
+      <div class="container page-hero" style="padding-bottom:0;">
+        <h2 class="section-title" style="margin-bottom:0.35rem;">{{ t('catalog_title') }}</h2>
+        <p>{{ t('catalog_intro') }}</p>
+      </div>
+      <div class="container catalog-layout" style="padding-top:1.25rem;">
+        <aside class="filters" aria-label="filters">
+          <h2>{{ t('filters_title') }}</h2>
+          <form method="get" action="{{ url_for('index') }}#catalog">
+            <div class="field">
+              <label for="f-city">{{ t('f_city') }}</label>
+              <select id="f-city" name="city">
+                <option value="">{{ t('f_city_all') }}</option>
+                {% for c in catalog_cities %}
+                <option value="{{ c }}" {% if city == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-rooms">{{ t('f_rooms') }}</label>
+              <select id="f-rooms" name="rooms">
+                <option value="">{{ t('rooms_any') }}</option>
+                <option value="Студия" {% if rooms == 'Студия' %}selected{% endif %}>{{ t('rooms_studio') }}</option>
+                <option value="1" {% if rooms == '1' %}selected{% endif %}>1</option>
+                <option value="2" {% if rooms == '2' %}selected{% endif %}>2</option>
+                <option value="3 и более" {% if rooms == '3 и более' %}selected{% endif %}>3+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-price">{{ t('f_price') }}</label>
+              <select id="f-price" name="max_price">
+                <option value="">{{ t('f_price_any') }}</option>
+                <option value="250000" {% if max_price == '250000' %}selected{% endif %}>250 000</option>
+                <option value="400000" {% if max_price == '400000' %}selected{% endif %}>400 000</option>
+                <option value="600000" {% if max_price == '600000' %}selected{% endif %}>600 000</option>
+                <option value="800000" {% if max_price == '800000' %}selected{% endif %}>800 000</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-owner">{{ t('f_owner') }}</label>
+              <select id="f-owner" name="owner_type">
+                <option value="">{{ t('f_owner_all') }}</option>
+                <option value="От собственника" {% if owner_type == 'От собственника' %}selected{% endif %}>{{ t('f_owner_direct') }}</option>
+                <option value="Агентство" {% if owner_type == 'Агентство' %}selected{% endif %}>{{ t('f_owner_agency') }}</option>
+              </select>
+            </div>
+            {% if q %}
+            <input type="hidden" name="q" value="{{ q }}" />
+            {% endif %}
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem;">{{ t('btn_apply') }}</button>
+          </form>
+        </aside>
+
+        <div>
+          <h3 class="section-title" style="font-size:1.25rem;margin-bottom:1rem;">{{ t('found') }}: {{ total }} {{ t('variants') }}</h3>
+          <div class="listings-wide">
+            {% for listing in listings %}
+            <a class="card card-link" href="{{ url_for('listing_detail', listing_id=listing['id']) }}">
+              <div class="card-img real-image" style="background-image:url('{{ listing['image_url'] }}');">
+                {% set bl = listing['badge'] | badge_label %}
+                {% if bl %}<span class="card-badge">{{ bl }}</span>{% endif %}
+              </div>
+              <div class="card-body">
+                <div class="card-price">{{ listing['price'] | tenge_fmt }} <small>{{ t('per_month') }}</small></div>
+                <h3 class="card-title">{{ listing | listing_t }}</h3>
+                <p class="card-meta">{{ listing['area_m2'] }} {{ t('currency_m2') }} · {{ listing['floor'] }}/{{ listing['floors_total'] }} · {{ listing['city'] }}, {{ listing['district'] }} · {{ listing['term'] }}</p>
+              </div>
+            </a>
+            {% else %}
+            <p class="section-sub">{{ t('found') }}: 0</p>
+            {% endfor %}
+          </div>
+
+          {% if pages > 1 %}
+          <nav class="pagination" aria-label="pagination">
+            {% for p in page_range %}
+              {% if p == page %}
+              <span class="current" aria-current="page">{{ p }}</span>
+              {% else %}
+              <a href="{{ index_url(page=p) }}#catalog">{{ p }}</a>
+              {% endif %}
+            {% endfor %}
+            {% if page < pages %}
+            <a href="{{ index_url(page=page + 1) }}#catalog">{{ t('pagination_next') }}</a>
+            {% endif %}
+          </nav>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <section id="tips">
+      <div class="container">
+        <h2 class="section-title">{{ t('admin_title') }}</h2>
+        <p class="section-sub">{{ t('admin_only') }}</p>
+        {% if admin_stats %}
+        <div id="adminStats" class="tips-grid">
+          <article class="tip">
+            <h3>{{ t('admin_users') }}</h3>
+            <p>{{ admin_stats.users }}</p>
+          </article>
+          <article class="tip">
+            <h3>{{ t('admin_listings') }}</h3>
+            <p>{{ admin_stats.listings }}</p>
+          </article>
+          <article class="tip">
+            <h3>{{ t('admin_msg') }}</h3>
+            <p>{{ admin_stats.msgs }}</p>
+            <p style="margin-top:0.6rem;"><a class="btn btn-primary btn-small" href="{{ url_for('admin_panel') }}">{{ t('nav_admin') }}</a></p>
+          </article>
+        </div>
+        {% else %}
+        <div class="tips-grid">
+          <article class="tip">
+            <p>{{ t('admin_hint') }}</p>
+          </article>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="container">
+        <h2 class="section-title">{{ t('faq_title') }}</h2>
+        <p class="section-sub">{{ t('faq_sub') }}</p>
+        <div class="faq">
+          {% for q, a in faq_items %}
+          <div class="faq-item">
+            <h3>{{ q }}</h3>
+            <p>{{ a }}</p>
+          </div>
+          {% endfor %}
+        </div>
+        <p class="kz-note">{{ t('kz_note') }}</p>
+      </div>
+    </section>
+{% endblock %}
